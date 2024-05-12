@@ -23,7 +23,10 @@ class User extends Authenticatable implements JWTSubject
         'first_name',
         'last_name',
         'email',
+        'address',
         'password',
+        'code',
+        'expire_at',
     ];
 
     /**
@@ -60,4 +63,10 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims() {
         return [];
     }
+//    public function generateCode(){
+//        $this->timestamps = false;
+//        $this->code = rand(1000,9999);
+//        $this->expire_at=now()->addMinute(30);
+//        $this->save();
+//    }
 }

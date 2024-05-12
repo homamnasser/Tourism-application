@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\EmailVerificationNotification;
+use App\Notifications\LoginNotification;
 
 class AuthController extends Controller
 {
@@ -31,6 +33,8 @@ class AuthController extends Controller
         if (! $token = auth()->attempt($validator->validated())) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+        $user=Auth::user();
+        $user->notify(new LoginNotification());
         return $this->createNewToken($token);
     }
     /**
@@ -44,6 +48,8 @@ class AuthController extends Controller
             'last_name' => 'required|string|between:2,100',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6',
+            'address' => 'required|string',
+
         ]);
         if($validator->fails()){
             return response()->json($validator->errors()->toJson(), 400);
@@ -52,6 +58,8 @@ class AuthController extends Controller
             $validator->validated(),
             ['password' => bcrypt($request->password)]
         ));
+
+        $user->notify(new EmailVerificationNotification);
         return response()->json([
             'message' => 'User successfully registered',
             'user' => $user
