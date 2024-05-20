@@ -44,8 +44,8 @@ class CountryController extends Controller
     public function updateCountry(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|unique:countries',
-            'description' => 'required|string',
+            'name' => 'string|unique:countries',
+            'description' => 'string',
         ]);
 
         if ($validator->fails()) {

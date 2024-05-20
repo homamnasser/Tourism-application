@@ -33,13 +33,13 @@ class CityController extends Controller
             $validator->validated()
         );
 
-        $get = City::with('country')->first();
+
         return response()->json([
             'code' => '0',
             'message' => 'City added successfully ',
             'result' => [
                 'city_name' => $city->name,
-                'country_name' => $get->country->name,
+                'country_name' => $city->country->name,
                 'description' => $city->description,
 
             ]
@@ -48,7 +48,7 @@ class CityController extends Controller
 
     /*
      * تعديل معلومات المدينة
-*/
+    */
 
     public function updateCity(Request $request, $id)
     {
@@ -60,9 +60,9 @@ class CityController extends Controller
 
         }
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|unique:cities',
-            'description' => 'required|string',
-            'country_id' => 'required|integer'
+            'name' => 'string|unique:cities',
+            'description' => 'string',
+            'country_id' => 'integer'
         ]);
         $country = Country::find($request->country_id);
         if (!$country) {
@@ -77,28 +77,16 @@ class CityController extends Controller
             return response()->json($validator->errors()->toJson(), 400);
         }
 
-        $city = City::find($id);
-
-        if (!$city) {
-            return response()->json([
-                'message' => 'City not found',
-            ], 404);
-
-        }
-
 
         $city->update($request->all());
-        $city1 = City::find($id)->first();
-
-        $get = City::with('country')->first();
 
 
         return response()->json([
                 'message' => 'City updated successfully ',
                 'result' => [
-                    'city_name' => $city1->name,
-                    'country_name' => $get->country->name,
-                    'description' => $city1->description,
+                    'city_name' => $city->name,
+                    'country_name' => $city->country->name,
+                    'description' => $city->description,
 
                 ]
             ]
@@ -122,7 +110,7 @@ class CityController extends Controller
         $city->delete();
 
         return response()->json([
-            'message' => 'Country deleted successfully ',
+            'message' => 'City deleted successfully ',
         ], 201);
 
     }
@@ -166,11 +154,11 @@ class CityController extends Controller
 
     /*
         عرض المدينة
-        */
+     */
     public function getCity($id)
     {
         $city = City::find($id);
-        $get = City::with('country')->first();
+//        $get = City::with('country')->first();
 
         if (!$city) {
             return response()->json([
@@ -183,7 +171,7 @@ class CityController extends Controller
                 'result' => [
                     'city_name' => $city->name,
                     'description' => $city->description,
-                    'country_name' => $get->name,
+                    'country_name' => $city->country->name,
                 ]
             ]
             , 201);
@@ -201,13 +189,13 @@ class CityController extends Controller
             array_push($cities, [
                 'name' => $data1->name,
                 'description' => $data1->description,
-                'country_name'=>$data1->country->name,
+                'country_name' => $data1->country->name,
             ]);
         }
 
         if ($data->isEmpty()) {
             return response()->json([
-                'message' => 'Countries not found',
+                'message' => 'Cities not found',
             ], 404);
         }
         return response()->json([

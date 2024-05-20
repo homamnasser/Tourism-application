@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\TwoFactorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -39,21 +40,32 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'country'
 ], function ($router) {
-    Route::post('addCountry', [countryController::class, 'addCountry']);
-    Route::post('updateCountry/{id}', [countryController::class, 'updateCountry']);
-    Route::post('deleteCountry/{id}', [countryController::class, 'deleteCountry']);
-    Route::post('searchCountry/{name}', [countryController::class, 'searchCountry']);
-    Route::post('getCountry/{id}', [countryController::class, 'getCountry']);
-    Route::get('getAllCountries',[countryController::class,'getAllCountries']);
+    Route::post('addCountry', [CountryController::class, 'addCountry'])->middleware('auth');
+    Route::post('updateCountry/{id}', [CountryController::class, 'updateCountry']);
+    Route::post('deleteCountry/{id}', [CountryController::class, 'deleteCountry']);
+    Route::post('searchCountry/{name}', [CountryController::class, 'searchCountry']);
+    Route::post('getCountry/{id}', [CountryController::class, 'getCountry']);
+    Route::get('getAllCountries',[CountryController::class,'getAllCountries']);
 });
 Route::group([
     'middleware' => 'api',
     'prefix' => 'city'
 ], function ($router) {
-    Route::post('addCity', [cityController::class, 'addCity']);
-    Route::post('updateCity/{id}', [cityController::class, 'updateCity']);
-    Route::post('deleteCity/{id}', [cityController::class, 'deleteCity']);
-    Route::post('searchCity/{name}', [cityController::class, 'searchCity']);
-    Route::post('getCity/{id}', [cityController::class, 'getCity']);
-    Route::get('getAllCities',[cityController::class,'getAllCities']);
+    Route::post('addCity', [CityController::class, 'addCity']);
+    Route::post('updateCity/{id}', [CityController::class, 'updateCity']);
+    Route::post('deleteCity/{id}', [CityController::class, 'deleteCity']);
+    Route::post('searchCity/{name}', [CityController::class, 'searchCity']);
+    Route::post('getCity/{id}', [CityController::class, 'getCity']);
+    Route::get('getAllCities',[CityController::class,'getAllCities']);
+});
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'facility'
+], function ($router) {
+    Route::post('addFacility', [FacilityController::class, 'addFacility']);
+    Route::post('updateFacility/{id}', [FacilityController::class, 'updateFacility']);
+    Route::post('deleteFacility/{id}', [FacilityController::class, 'deleteFacility']);
+    Route::post('searchFacility/{name}', [FacilityController::class, 'searchFacility']);
+    Route::post('getFacility/{id}', [FacilityController::class, 'getFacility']);
+    Route::get('getAllFacility',[FacilityController::class,'getAllFacility']);
 });
