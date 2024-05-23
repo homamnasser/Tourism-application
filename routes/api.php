@@ -5,6 +5,7 @@ use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\FacilityController;
+use App\Http\Controllers\HotelController;
 use App\Http\Controllers\TwoFactorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -68,4 +69,15 @@ Route::group([
     Route::post('searchFacility/{name}', [FacilityController::class, 'searchFacility']);
     Route::post('getFacility/{id}', [FacilityController::class, 'getFacility']);
     Route::get('getAllFacility',[FacilityController::class,'getAllFacility']);
+});
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'hotel'
+], function ($router) {
+    Route::post('addHotel', [HotelController::class, 'addHotel']);
+    Route::post('updateHotel/{id}', [HotelController::class, 'updateHotel']);
+    Route::post('deleteHotel/{id}', [HotelController::class, 'deleteHotel']);
+    Route::post('searchHotel/{name}', [HotelController::class, 'searchHotel']);
+    Route::post('getHotel/{id}', [HotelController::class, 'getHotel']);
+    Route::get('getAllHotel',[HotelController::class,'getAllHotel']);
 });

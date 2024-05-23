@@ -3,21 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\City;
-use App\Models\Country;
 use App\Models\Facility;
+use App\Models\Hotel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class FacilityController extends Controller
+class HotelController extends Controller
 {
     /*
-    * اضافة منشأة
+    * اضافة فندق
     * */
-    public function addFacility(Request $request)
+    public function addHotel(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'description' => 'required|string',
+            'price' => 'required|integer',
+            'availability' => 'required|integer',
             'city_id' => 'required|integer',
         ]);
         $city = City::find($request->city_id);
@@ -30,40 +32,44 @@ class FacilityController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
-        $facility = Facility::create(
+        $hotel = Hotel::create(
             $validator->validated()
         );
 
         return response()->json([
             'code' => '0',
-            'message' => 'Facility added successfully ',
+            'message' => 'Hotel added successfully ',
             'result' => [
-                'facility_name' => $facility->name,
-                'city_name' => $facility->city->name,
-                'country_name' => $facility->city->country->name,
-                'description' => $facility->description,
+                'hotel_name' => $hotel->name,
+                'description' => $hotel->description,
+                'price' => $hotel->price,
+                'availability' => $hotel->availability,
+                'city_name' => $hotel->city->name,
+                'country_name' => $hotel->city->country->name,
 
             ]
         ], 201);
     }
 
     /*
-     * تعديل معلومات المنشأة
+     * تعديل معلومات الفندق
     */
 
-    public function updateFacility(Request $request, $id)
+    public function updateHotel(Request $request, $id)
     {
-        $facility = Facility::find($id);
-        if (!$facility) {
+        $hotel = Hotel::find($id);
+        if (!$hotel) {
             return response()->json([
-                'message' => 'Facility not found'
+                'message' => 'Hotel not found'
             ], 400);
 
         }
         $validator = Validator::make($request->all(), [
             'name' => 'string',
             'description' => 'string',
-            'city_id' => 'integer'
+            'price' => 'integer',
+            'availability' => 'integer',
+            'city_id' => 'integer',
         ]);
         $city = City::find($request->city_id);
         if (!$city) {
@@ -77,17 +83,18 @@ class FacilityController extends Controller
 
             return response()->json($validator->errors()->toJson(), 400);
         }
-        $facility->update($request->all());
+        $hotel->update($request->all());
 
 
         return response()->json([
-                'message' => 'City updated successfully ',
+                'message' => 'Hotel updated successfully ',
                 'result' => [
-                    'name' => $facility->name,
-                    'city_name' => $facility->city->name,
-                    'country_name' => $facility->city->country->name,
-                    'description' => $facility->description,
-
+                    'hotel_name' => $hotel->name,
+                    'description' => $hotel->description,
+                    'price' => $hotel->price,
+                    'availability' => $hotel->availability,
+                    'city_name' => $hotel->city->name,
+                    'country_name' => $hotel->city->country->name,
 
                 ]
             ]
@@ -95,38 +102,35 @@ class FacilityController extends Controller
     }
 
     /*
-    حذف منشأة
+    حذف فندق
     */
-    public function deleteFacility($id)
+    public function deleteHotel($id)
     {
-        $facility = Facility::find($id);
+        $hotel = Hotel::find($id);
 
-        if (!$facility) {
+        if (!$hotel) {
             return response()->json([
-                'message' => 'Facility not found',
+                'message' => 'Hotel not found',
             ], 404);
         }
 
-
-        $facility->delete();
+        $hotel->delete();
 
         return response()->json([
-            'message' => 'Facility deleted successfully ',
+            'message' => 'Hotel deleted successfully ',
         ], 201);
 
     }
     /*
-     * البحث عن المنشأة
-     * */
-
-    public function searchFacility($name)
+     * البحث عن فندق*/
+    public function searchHotel($name)
     {
 
-        $facility = Facility::where('name', 'like', '%' . $name . '%')->get();
-        $facilities = [];
-        foreach ($facility as $data) {
+        $hotel = Hotel::where('name', 'like', '%' . $name . '%')->get();
+        $hotels = [];
+        foreach ($hotel as $data) {
 
-            array_push($facilities, [
+            array_push($hotels, [
                 'name' => $data->name,
                 'description' => $data->description,
                 'city_name' => $data->city->name,
@@ -134,56 +138,55 @@ class FacilityController extends Controller
             ]);
         }
 
-        if ($facility->isEmpty()) {
+        if ($hotel->isEmpty()) {
             return response()->json([
-                'message' => 'Facility not found',
+                'message' => 'Hotel not found',
             ], 404);
         }
 
 
         return response()->json([
-                'message' => 'Facility as name ',
+                'message' => 'Hotel as name ',
                 'result' => [
-                    'data' => $facilities,
+                    'data' => $hotels,
                 ]
             ]
             , 201);
     }
-
     /*
-         عرض المنشأة
-     */
-    public function getFacility($id)
+     عرض الفندق
+ */
+    public function getHotel($id)
     {
-        $facility = Facility::find($id);
-        if (!$facility) {
+        $hotel = Hotel::find($id);
+        if (!$hotel) {
             return response()->json([
-                'message' => 'Facility not found',
+                'message' => 'Hotel not found',
             ], 404);
         }
         return response()->json([
                 'code' => '0',
-                'message' => 'This is Facility ',
+                'message' => 'This is Hotel ',
                 'result' => [
-                    'facility_name' => $facility->name,
-                    'description' => $facility->description,
-                    'city_name' => $facility->city->name,
-                    'country_name' => $facility->city->country->name,
+                    'facility_name' => $hotel->name,
+                    'description' => $hotel->description,
+                    'city_name' => $hotel->city->name,
+                    'country_name' => $hotel->city->country->name,
                 ]
             ]
             , 201);
     }
 
     /*
-   عرض كل المنشات
+   عرض كل الفنادق
   */
-    public function getAllFacility()
+    public function getAllHotel()
     {
-        $facilities = [];
-        $data = Facility::get();
+        $hotels = [];
+        $data = Hotel::get();
         foreach ($data as $data1) {
 
-            array_push($facilities, [
+            array_push($hotels, [
                 'name' => $data1->name,
                 'description' => $data1->description,
                 'city_name' => $data1->city->name,
@@ -193,17 +196,16 @@ class FacilityController extends Controller
 
         if ($data->isEmpty()) {
             return response()->json([
-                'message' => 'facilities not found',
+                'message' => 'Hotel not found',
             ], 404);
         }
         return response()->json([
                 'code' => '0',
-                'message' => 'All facilities',
+                'message' => 'All hotels',
                 'result' => [
-                    'country' => $facilities,
+                    'country' => $hotels,
                 ]
             ]
             , 201);
     }
-
 }

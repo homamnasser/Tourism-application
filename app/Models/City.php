@@ -21,5 +21,9 @@ class City extends Model
     {
         return $this->hasMany(Facility::class);
     }
+    public function hotels()
+    {
+        return $this->hasMany(Hotel::class);
+    }
 
 }
