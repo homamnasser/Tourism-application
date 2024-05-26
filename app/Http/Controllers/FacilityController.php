@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\Facility;
+use App\Models\Hotel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -115,6 +116,7 @@ class FacilityController extends Controller
         ], 201);
 
     }
+
     /*
      * البحث عن المنشأة
      * */
@@ -200,7 +202,46 @@ class FacilityController extends Controller
                 'code' => '0',
                 'message' => 'All facilities',
                 'result' => [
-                    'country' => $facilities,
+                    'facilities' => $facilities,
+                ]
+            ]
+            , 201);
+    }
+    /*
+     * جلب المنشات حسب المدينة
+     * */
+    public function getFacilityByCity($id)
+    {
+        $city = City::find($id);
+        if (!$city) {
+            return response()->json([
+                'message' => 'city not found'
+            ], 400);
+        }
+
+        $facility = Facility::where('city_id', $id)->get();
+        $facilities = [];
+        foreach ($facility as $data) {
+
+            array_push($facilities, [
+                'name' => $data->name,
+                'description' => $data->description,
+                'city_name' => $data->city->name,
+                'country_name' => $data->city->country->name,
+            ]);
+        }
+
+        if ($facility->isEmpty()) {
+            return response()->json([
+                'message' => 'Facility not found',
+            ], 404);
+        }
+
+
+        return response()->json([
+                'message' => 'Facilities as city ',
+                'result' => [
+                    'data' => $facilities
                 ]
             ]
             , 201);

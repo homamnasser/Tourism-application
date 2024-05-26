@@ -3,23 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\City;
-use App\Models\Facility;
 use App\Models\Hotel;
+use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class HotelController extends Controller
+class RestaurantController extends Controller
 {
     /*
-    * اضافة فندق
+    * اضافة مطعم
     * */
-    public function addHotel(Request $request)
+    public function addRestaurant(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'description' => 'required|string',
             'price' => 'required|integer',
-            'availability' => 'required|integer',
+            'food_type' => 'required|string',
             'city_id' => 'required|integer',
         ]);
         $city = City::find($request->city_id);
@@ -32,35 +32,35 @@ class HotelController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
-        $hotel = Hotel::create(
+        $restaurant = Restaurant::create(
             $validator->validated()
         );
 
         return response()->json([
             'code' => '0',
-            'message' => 'Hotel added successfully ',
+            'message' => 'Restaurant added successfully ',
             'result' => [
-                'hotel_name' => $hotel->name,
-                'description' => $hotel->description,
-                'price' => $hotel->price,
-                'availability' => $hotel->availability,
-                'city_name' => $hotel->city->name,
-                'country_name' => $hotel->city->country->name,
+                'restaurant_name' => $restaurant->name,
+                'description' => $restaurant->description,
+                'price' => $restaurant->price,
+                'food_type' => $restaurant->food_type,
+                'city_name' => $restaurant->city->name,
+                'country_name' => $restaurant->city->country->name,
 
             ]
         ], 201);
     }
 
     /*
-     * تعديل معلومات الفندق
-    */
+    * تعديل معلومات المطعم
+   */
 
-    public function updateHotel(Request $request, $id)
+    public function updateRestaurant(Request $request, $id)
     {
-        $hotel = Hotel::find($id);
-        if (!$hotel) {
+        $restaurant = Restaurant::find($id);
+        if (!$restaurant) {
             return response()->json([
-                'message' => 'Hotel not found'
+                'message' => 'Restaurant not found'
             ], 400);
 
         }
@@ -68,7 +68,7 @@ class HotelController extends Controller
             'name' => 'string',
             'description' => 'string',
             'price' => 'integer',
-            'availability' => 'integer',
+            'food_type' => 'string',
             'city_id' => 'integer',
         ]);
         $city = City::find($request->city_id);
@@ -83,18 +83,18 @@ class HotelController extends Controller
 
             return response()->json($validator->errors()->toJson(), 400);
         }
-        $hotel->update($request->all());
+        $restaurant->update($request->all());
 
 
         return response()->json([
                 'message' => 'Hotel updated successfully ',
                 'result' => [
-                    'hotel_name' => $hotel->name,
-                    'description' => $hotel->description,
-                    'price' => $hotel->price,
-                    'availability' => $hotel->availability,
-                    'city_name' => $hotel->city->name,
-                    'country_name' => $hotel->city->country->name,
+                    'restaurant_name' => $restaurant->name,
+                    'description' => $restaurant->description,
+                    'price' => $restaurant->price,
+                    'food_type' => $restaurant->food_type,
+                    'city_name' => $restaurant->city->name,
+                    'country_name' => $restaurant->city->country->name,
 
                 ]
             ]
@@ -102,54 +102,56 @@ class HotelController extends Controller
     }
 
     /*
-    حذف فندق
-    */
-    public function deleteHotel($id)
+        حذف مطعم
+        */
+    public function deleteRestaurant($id)
     {
-        $hotel = Hotel::find($id);
+        $restaurant = Restaurant::find($id);
 
-        if (!$hotel) {
+        if (!$restaurant) {
             return response()->json([
-                'message' => 'Hotel not found',
+                'message' => 'Restaurant not found',
             ], 404);
         }
 
-        $hotel->delete();
+        $restaurant->delete();
 
         return response()->json([
-            'message' => 'Hotel deleted successfully ',
+            'message' => 'Restaurant deleted successfully ',
         ], 201);
 
     }
+
     /*
-     * البحث عن فندق*/
-    public function searchHotel($name)
+    * البحث عن مطعم
+     * */
+    public function searchRestaurant($name)
     {
 
-        $hotel = Hotel::where('name', 'like', '%' . $name . '%')->get();
-        $hotels = [];
-        foreach ($hotel as $data) {
+        $restaurant = Restaurant::where('name', 'like', '%' . $name . '%')->get();
+        $restaurants = [];
+        foreach ($restaurant as $data) {
 
-            array_push($hotels, [
+            array_push($restaurants, [
                 'name' => $data->name,
                 'description' => $data->description,
-                'availability'=>$data->availability,
+                'food_type' => $data->food_type,
                 'city_name' => $data->city->name,
                 'country_name' => $data->city->country->name,
             ]);
         }
 
-        if ($hotel->isEmpty()) {
+        if ($restaurant->isEmpty()) {
             return response()->json([
-                'message' => 'Hotel not found',
+                'message' => 'Restaurant not found',
             ], 404);
         }
 
 
         return response()->json([
-                'message' => 'Hotel as name ',
+                'message' => 'Restaurant as name ',
                 'result' => [
-                    'data' => $hotels,
+                    'data' => $restaurants,
                 ]
             ]
             , 201);
@@ -158,23 +160,23 @@ class HotelController extends Controller
     /*
      عرض الفندق
  */
-    public function getHotel($id)
+    public function getRestaurant($id)
     {
-        $hotel = Hotel::find($id);
-        if (!$hotel) {
+        $restaurant = Restaurant::find($id);
+        if (!$restaurant) {
             return response()->json([
-                'message' => 'Hotel not found',
+                'message' => 'Restaurant not found',
             ], 404);
         }
         return response()->json([
                 'code' => '0',
-                'message' => 'This is Hotel ',
+                'message' => 'This is Restaurant ',
                 'result' => [
-                    'hotel_name' => $hotel->name,
-                    'description' => $hotel->description,
-                    'availability'=>$hotel->availability,
-                    'city_name' => $hotel->city->name,
-                    'country_name' => $hotel->city->country->name,
+                    'restaurant_name' => $restaurant->name,
+                    'description' => $restaurant->description,
+                    'food_type'=>$restaurant->food_type,
+                    'city_name' => $restaurant->city->name,
+                    'country_name' => $restaurant->city->country->name,
                 ]
             ]
             , 201);
@@ -183,16 +185,16 @@ class HotelController extends Controller
     /*
    عرض كل الفنادق
   */
-    public function getAllHotel()
+    public function getAllRestaurant()
     {
-        $hotels = [];
-        $data = Hotel::get();
+        $restaurants = [];
+        $data = Restaurant::get();
         foreach ($data as $data1) {
 
-            array_push($hotels, [
+            array_push($restaurants, [
                 'name' => $data1->name,
                 'description' => $data1->description,
-                'availability'=>$data1->availability,
+                'food_type'=>$data1->food_type,
                 'city_name' => $data1->city->name,
                 'country_name' => $data1->city->country->name,
             ]);
@@ -200,22 +202,22 @@ class HotelController extends Controller
 
         if ($data->isEmpty()) {
             return response()->json([
-                'message' => 'Hotel not found',
+                'message' => 'Restaurant not found',
             ], 404);
         }
         return response()->json([
                 'code' => '0',
                 'message' => 'All hotels',
                 'result' => [
-                    'country' => $hotels,
+                    'country' => $restaurants,
                 ]
             ]
             , 201);
     }
-    /*
- * جلب الفنادق حسب المدينة
+/*
+ * جلب المطاعم حسب المدينة
  * */
-    public function getHotelByCity($id)
+    public function getRestaurantByCity($id)
     {
         $city = City::find($id);
         if (!$city) {
@@ -224,20 +226,20 @@ class HotelController extends Controller
             ], 400);
         }
 
-        $hotel = Hotel::where('city_id', $id)->get();
-        $hotels = [];
-        foreach ($hotel as $data) {
+        $restaurant = Restaurant::where('city_id', $id)->get();
+        $restaurants = [];
+        foreach ($restaurant as $data) {
 
-            array_push($hotels, [
+            array_push($restaurants, [
                 'name' => $data->name,
                 'description' => $data->description,
-                'availability'=>$data->availability,
+                'food_type'=>$data->food_type,
                 'city_name' => $data->city->name,
                 'country_name' => $data->city->country->name,
             ]);
         }
 
-        if ($hotel->isEmpty()) {
+        if ($restaurant->isEmpty()) {
             return response()->json([
                 'message' => 'Hotel not found',
             ], 404);
@@ -245,9 +247,9 @@ class HotelController extends Controller
 
 
         return response()->json([
-                'message' => 'Hotels as city ',
+                'message' => 'Restaurants as city ',
                 'result' => [
-                    'data' => $hotels,
+                    'data' => $restaurants,
                 ]
             ]
             , 201);
