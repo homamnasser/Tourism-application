@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\City;
 use App\Models\Facility;
 use App\Models\Hotel;
+use App\Traits\PhotoTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class HotelController extends Controller
 {
+    use PhotoTrait;
     /*
     * اضافة فندق
     * */
@@ -21,6 +23,8 @@ class HotelController extends Controller
             'price' => 'required|integer',
             'availability' => 'required|integer',
             'city_id' => 'required|integer',
+            'imgs' => 'required',
+            'imgs.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
         $city = City::find($request->city_id);
         if (!$city) {
@@ -32,8 +36,16 @@ class HotelController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
-        $hotel = Hotel::create(
-            $validator->validated()
+        $images = $this->upload($request->imgs);
+
+        $hotel = Hotel::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'city_id'=>$request->city_id,
+                'price'=>$request->price,
+                'availability'=>$request->availability,
+                'imgs' => $images,
+            ]
         );
 
         return response()->json([
@@ -46,6 +58,7 @@ class HotelController extends Controller
                 'availability' => $hotel->availability,
                 'city_name' => $hotel->city->name,
                 'country_name' => $hotel->city->country->name,
+                'imgs'=>json_decode($images)
 
             ]
         ], 201);
@@ -121,6 +134,7 @@ class HotelController extends Controller
         ], 201);
 
     }
+
     /*
      * البحث عن فندق*/
     public function searchHotel($name)
@@ -133,9 +147,10 @@ class HotelController extends Controller
             array_push($hotels, [
                 'name' => $data->name,
                 'description' => $data->description,
-                'availability'=>$data->availability,
+                'availability' => $data->availability,
                 'city_name' => $data->city->name,
                 'country_name' => $data->city->country->name,
+                'imgs'=>json_decode($data->imgs)
             ]);
         }
 
@@ -172,9 +187,10 @@ class HotelController extends Controller
                 'result' => [
                     'hotel_name' => $hotel->name,
                     'description' => $hotel->description,
-                    'availability'=>$hotel->availability,
+                    'availability' => $hotel->availability,
                     'city_name' => $hotel->city->name,
                     'country_name' => $hotel->city->country->name,
+                    'imgs'=>json_decode($hotel->imgs)
                 ]
             ]
             , 201);
@@ -192,9 +208,10 @@ class HotelController extends Controller
             array_push($hotels, [
                 'name' => $data1->name,
                 'description' => $data1->description,
-                'availability'=>$data1->availability,
+                'availability' => $data1->availability,
                 'city_name' => $data1->city->name,
                 'country_name' => $data1->city->country->name,
+                'imgs'=>json_decode($data1->imgs)
             ]);
         }
 
@@ -212,6 +229,7 @@ class HotelController extends Controller
             ]
             , 201);
     }
+
     /*
  * جلب الفنادق حسب المدينة
  * */
@@ -231,9 +249,10 @@ class HotelController extends Controller
             array_push($hotels, [
                 'name' => $data->name,
                 'description' => $data->description,
-                'availability'=>$data->availability,
+                'availability' => $data->availability,
                 'city_name' => $data->city->name,
                 'country_name' => $data->city->country->name,
+                'imgs'=>json_decode($data->imgs)
             ]);
         }
 
@@ -252,4 +271,36 @@ class HotelController extends Controller
             ]
             , 201);
     }
+    public function updatePhoto(Request $request, $id)
+    {
+        $hotel = Hotel::find($id);
+
+        if (!$hotel) {
+            return response()->json([
+                'message' => 'Country not found',
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'imgs'=> 'required',
+            'imgs.*' => [ 'image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+        $images = $this->upload($request->imgs);
+
+        $hotel->update([
+            'imgs'=>$images
+        ]);
+        return response()->json([
+                'code' => '0',
+                'message' => 'Updated photo',
+                'result' => [
+                    'imgs' =>json_decode($images) ,
+                ]
+            ]
+            , 201);
+    }
+
 }

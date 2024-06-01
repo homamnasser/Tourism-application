@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\City;
 use App\Models\Country;
+use App\Traits\PhotoTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class CityController extends Controller
 {
+    use PhotoTrait;
+
     /*
      * اضافة مدينة
      * */
@@ -18,6 +21,8 @@ class CityController extends Controller
             'name' => 'required|string|unique:cities',
             'description' => 'required|string',
             'country_id' => 'required|integer',
+            'imgs'=> 'required',
+            'imgs.*' => [ 'image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
         $country = Country::find($request->country_id);
         if (!$country) {
@@ -29,8 +34,14 @@ class CityController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
-        $city = City::create(
-            $validator->validated()
+        $images = $this->upload($request->imgs);
+
+        $city = City::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'country_id'=>$request->country_id,
+                'imgs' => $images,
+            ]
         );
 
 
@@ -41,6 +52,7 @@ class CityController extends Controller
                 'city_name' => $city->name,
                 'country_name' => $city->country->name,
                 'description' => $city->description,
+                'imgs'=>json_decode($images),
 
             ]
         ], 201);
@@ -63,6 +75,7 @@ class CityController extends Controller
             'name' => 'string|unique:cities',
             'description' => 'string',
             'country_id' => 'integer'
+
         ]);
         $country = Country::find($request->country_id);
         if (!$country) {
@@ -132,6 +145,8 @@ class CityController extends Controller
                 'name' => $data->name,
                 'description' => $data->description,
                 'country_name' => $data->country->name,
+                'imgs'=>json_decode($data->imgs)
+
             ]);
         }
 
@@ -172,6 +187,7 @@ class CityController extends Controller
                     'city_name' => $city->name,
                     'description' => $city->description,
                     'country_name' => $city->country->name,
+                    'imgs'=>json_decode($city->imgs)
                 ]
             ]
             , 201);
@@ -190,6 +206,7 @@ class CityController extends Controller
                 'name' => $data1->name,
                 'description' => $data1->description,
                 'country_name' => $data1->country->name,
+                'imgs'=>json_decode($data1->imgs)
             ]);
         }
 
@@ -207,5 +224,35 @@ class CityController extends Controller
             ]
             , 201);
     }
+    public function updatePhoto(Request $request, $id)
+    {
+        $city = City::find($id);
 
+        if (!$city) {
+            return response()->json([
+                'message' => 'Country not found',
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'imgs'=> 'required',
+            'imgs.*' => [ 'image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+        $images = $this->upload($request->imgs);
+
+        $city->update([
+            'imgs'=>$images
+        ]);
+        return response()->json([
+                'code' => '0',
+                'message' => 'Updated photo',
+                'result' => [
+                    'imgs' =>json_decode($images) ,
+                ]
+            ]
+            , 201);
+    }
 }

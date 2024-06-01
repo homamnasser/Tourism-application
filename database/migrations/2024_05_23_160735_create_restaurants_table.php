@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('food_type');
             $table->string('description');
             $table->integer('price');
+            $table->string('imgs');
             $table->unsignedBigInteger('city_id');
             $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
             $table->timestamps();

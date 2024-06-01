@@ -6,11 +6,13 @@ use App\Models\City;
 use App\Models\Country;
 use App\Models\Facility;
 use App\Models\Hotel;
+use App\Traits\PhotoTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class FacilityController extends Controller
 {
+    use PhotoTrait;
     /*
     * اضافة منشأة
     * */
@@ -20,6 +22,8 @@ class FacilityController extends Controller
             'name' => 'required|string',
             'description' => 'required|string',
             'city_id' => 'required|integer',
+            'imgs'=> 'required',
+            'imgs.*' => [ 'image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
         $city = City::find($request->city_id);
         if (!$city) {
@@ -31,8 +35,14 @@ class FacilityController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
-        $facility = Facility::create(
-            $validator->validated()
+        $images = $this->upload($request->imgs);
+
+        $facility = Facility::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'city_id'=>$request->city_id,
+                'imgs' => $images,
+          ]
         );
 
         return response()->json([
@@ -43,6 +53,7 @@ class FacilityController extends Controller
                 'city_name' => $facility->city->name,
                 'country_name' => $facility->city->country->name,
                 'description' => $facility->description,
+                'imgs'=>json_decode($images),
 
             ]
         ], 201);
@@ -133,6 +144,8 @@ class FacilityController extends Controller
                 'description' => $data->description,
                 'city_name' => $data->city->name,
                 'country_name' => $data->city->country->name,
+                'imgs'=>json_decode($data->imgs)
+
             ]);
         }
 
@@ -171,12 +184,11 @@ class FacilityController extends Controller
                     'description' => $facility->description,
                     'city_name' => $facility->city->name,
                     'country_name' => $facility->city->country->name,
+                    'imgs'=>json_decode($facility->imgs)
                 ]
             ]
             , 201);
-    }
-
-    /*
+    } /*
    عرض كل المنشات
   */
     public function getAllFacility()
@@ -190,6 +202,8 @@ class FacilityController extends Controller
                 'description' => $data1->description,
                 'city_name' => $data1->city->name,
                 'country_name' => $data1->city->country->name,
+                'imgs'=>json_decode($data1->imgs)
+
             ]);
         }
 
@@ -207,6 +221,8 @@ class FacilityController extends Controller
             ]
             , 201);
     }
+
+
     /*
      * جلب المنشات حسب المدينة
      * */
@@ -228,6 +244,8 @@ class FacilityController extends Controller
                 'description' => $data->description,
                 'city_name' => $data->city->name,
                 'country_name' => $data->city->country->name,
+                'imgs'=>json_decode($data->imgs)
+
             ]);
         }
 
@@ -246,5 +264,35 @@ class FacilityController extends Controller
             ]
             , 201);
     }
+    public function updatePhoto(Request $request, $id)
+    {
+        $facility = Facility::find($id);
 
+        if (!$facility) {
+            return response()->json([
+                'message' => 'Facility not found',
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'imgs'=> 'required',
+            'imgs.*' => [ 'image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+        $images = $this->upload($request->imgs);
+
+        $facility->update([
+            'imgs'=>$images
+        ]);
+        return response()->json([
+                'code' => '0',
+                'message' => 'Updated photo',
+                'result' => [
+                    'imgs' =>json_decode($images) ,
+                ]
+            ]
+            , 201);
+    }
 }

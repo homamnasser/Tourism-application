@@ -6,9 +6,12 @@ use App\Models\City;
 use App\Models\Country;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\PhotoTrait;
 
 class CountryController extends Controller
 {
+    use PhotoTrait;
+
     /*
 اضافة دولة
     */
@@ -18,13 +21,20 @@ class CountryController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|unique:countries',
             'description' => 'required|string',
+            'imgs'=> 'required',
+            'imgs.*' => [ 'image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors()->toJson(), 400);
         }
-        $country = Country::create(
-            $validator->validated()
-        );
+
+        $images = $this->upload($request->imgs);
+
+        $country = Country::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'imgs' => $images,
+        ]);
 
         return response()->json([
                 'code' => '0',
@@ -32,6 +42,8 @@ class CountryController extends Controller
                 'result' => [
                     'country_name' => $country->name,
                     'description' => $country->description,
+                    'imgs' => json_decode($images),
+
                 ]
             ]
             , 201);
@@ -43,6 +55,13 @@ class CountryController extends Controller
 
     public function updateCountry(Request $request, $id)
     {
+        $country = Country::find($id);
+
+        if (!$country) {
+            return response()->json([
+                'message' => 'Country not found',
+            ], 404);
+        }
         $validator = Validator::make($request->all(), [
             'name' => 'string|unique:countries',
             'description' => 'string',
@@ -53,14 +72,7 @@ class CountryController extends Controller
             return response()->json($validator->errors()->toJson(), 400);
         }
 
-        $country = Country::find($id);
 
-        if (!$country) {
-            return response()->json([
-                'message' => 'Country not found',
-            ], 404);
-
-        }
 
 
         $country->update($request->all());
@@ -111,7 +123,8 @@ class CountryController extends Controller
 
             array_push($countries, [
                 'name' => $data->name,
-                'description' => $data->description
+                'description' => $data->description,
+                'imgs'=>json_decode($data->imgs)
             ]);
         }
 
@@ -150,7 +163,8 @@ class CountryController extends Controller
                 'message' => 'This is Country ',
                 'result' => [
                     'country_name' => $country->name,
-                    'description' => $country->description
+                    'description' => $country->description,
+                    'imgs'=>json_decode($country->imgs),
                 ]
             ]
             , 201);
@@ -168,7 +182,9 @@ class CountryController extends Controller
 
             array_push($countries, [
                 'name' => $data1->name,
-                'description' => $data1->description
+                'description' => $data1->description,
+                'imgs'=>json_decode($data1->imgs)
+
             ]);
         }
 
@@ -182,6 +198,37 @@ class CountryController extends Controller
                 'message' => 'All countries',
                 'result' => [
                     'country' => $countries,
+                ]
+            ]
+            , 201);
+    }
+    public function updatePhoto(Request $request, $id)
+    {
+        $country = Country::find($id);
+
+        if (!$country) {
+            return response()->json([
+                'message' => 'Country not found',
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'imgs'=> 'required',
+            'imgs.*' => [ 'image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+        $images = $this->upload($request->imgs);
+
+        $country->update([
+            'imgs'=>$images
+        ]);
+        return response()->json([
+                'code' => '0',
+                'message' => 'Updated photo',
+                'result' => [
+                    'imgs' =>json_decode($images) ,
                 ]
             ]
             , 201);

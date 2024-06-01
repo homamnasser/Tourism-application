@@ -7,6 +7,7 @@ use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\RestaurantController;
+use App\Http\Controllers\TransportationCompanyController;
 use App\Http\Controllers\TwoFactorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,8 @@ Route::group([
     Route::post('searchCountry/{name}', [CountryController::class, 'searchCountry']);
     Route::post('getCountry/{id}', [CountryController::class, 'getCountry']);
     Route::get('getAllCountries',[CountryController::class,'getAllCountries']);
+    Route::post('updatePhoto/{id}', [CountryController::class, 'updatePhoto']);
+
 });
 Route::group([
     'middleware' => 'api',
@@ -59,6 +62,8 @@ Route::group([
     Route::post('searchCity/{name}', [CityController::class, 'searchCity']);
     Route::post('getCity/{id}', [CityController::class, 'getCity']);
     Route::get('getAllCities',[CityController::class,'getAllCities']);
+    Route::post('updatePhoto/{id}', [CityController::class, 'updatePhoto']);
+
 });
 Route::group([
     'middleware' => 'api',
@@ -71,7 +76,7 @@ Route::group([
     Route::post('getFacility/{id}', [FacilityController::class, 'getFacility']);
     Route::get('getAllFacility',[FacilityController::class,'getAllFacility']);
     Route::post('getFacilityByCity/{id}', [FacilityController::class, 'getFacilityByCity']);
-
+    Route::post('updatePhoto/{id}', [FacilityController::class, 'updatePhoto']);
 });
 Route::group([
     'middleware' => 'api',
@@ -84,6 +89,8 @@ Route::group([
     Route::post('getHotel/{id}', [HotelController::class, 'getHotel']);
     Route::get('getAllHotel',[HotelController::class,'getAllHotel']);
     Route::post('getHotelByCity/{id}', [HotelController::class, 'getHotelByCity']);
+    Route::post('updatePhoto/{id}', [HotelController::class, 'updatePhoto']);
+
 
 });
 Route::group([
@@ -97,5 +104,19 @@ Route::group([
     Route::post('getRestaurant/{id}', [RestaurantController::class, 'getRestaurant']);
     Route::get('getAllRestaurant',[RestaurantController::class,'getAllRestaurant']);
     Route::post('getRestaurantByCity/{id}', [RestaurantController::class, 'getRestaurantByCity']);
+    Route::post('updatePhoto/{id}', [RestaurantController::class, 'updatePhoto']);
+
+});
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'company'
+], function ($router) {
+    Route::post('addCompany', [TransportationCompanyController::class, 'addCompany']);
+    Route::post('updateCompany/{id}', [TransportationCompanyController::class, 'updateCompany']);
+    Route::post('deleteCompany/{id}', [TransportationCompanyController::class, 'deleteCompany']);
+    Route::post('searchCompany/{name}', [TransportationCompanyController::class, 'searchCompany']);
+    Route::post('getCompany/{id}', [TransportationCompanyController::class, 'getCompany']);
+    Route::get('getAllCompany',[TransportationCompanyController::class,'getAllCompany']);
+    Route::post('updatePhoto/{id}', [TransportationCompanyController::class, 'updatePhoto']);
 
 });

@@ -12,6 +12,7 @@ class Facility extends Model
         'name',
         'description',
         'city_id',
+        'imgs'
     ];
     public function city()
     {

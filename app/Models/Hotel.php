@@ -14,6 +14,7 @@ class Hotel extends Model
         'price',
         'availability',
         'city_id',
+        'imgs'
     ];
     public function city()
     {
