@@ -34,7 +34,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         $user=Auth::user();
-        $user->notify(new LoginNotification());
+        //$user->notify(new LoginNotification());
         return $this->createNewToken($token);
     }
     /**
@@ -59,11 +59,13 @@ class AuthController extends Controller
             ['password' => bcrypt($request->password)]
         ));
 
-        $user->notify(new EmailVerificationNotification);
-        return response()->json([
-            'message' => 'User successfully registered',
-            'user' => $user
-        ], 201);
+       // $user->notify(new EmailVerificationNotification);
+        if (! $token = auth()->attempt($validator->validated())) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $user=Auth::user();
+        //$user->notify(new LoginNotification());
+        return $this->createNewToken($token);
     }
 
     /**
@@ -103,7 +105,38 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
+            'user' => auth()->user(),
+
+
         ]);
     }
+    public function updateWallet(Request $request,$id )
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 400);
+
+        }
+        $validator = Validator::make($request->all(), [
+            'value' => 'required|numeric',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+        $user->update([
+            'wallet'=>$request->value
+        ]);
+        return response()->json([
+                'message' => ' Packing completed successfully ',
+                'result' => [
+                    'value' => $user->wallet,
+
+                ]
+            ]
+            , 201);
+    }
+
+
 }

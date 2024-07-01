@@ -188,7 +188,8 @@ class FacilityController extends Controller
                 ]
             ]
             , 201);
-    } /*
+    }
+    /*
    عرض كل المنشات
   */
     public function getAllFacility()

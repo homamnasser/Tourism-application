@@ -25,8 +25,10 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'address',
         'password',
+        'role_id',
         'code',
         'expire_at',
+        'wallet'
     ];
 
     /**
@@ -69,4 +71,8 @@ class User extends Authenticatable implements JWTSubject
 //        $this->expire_at=now()->addMinute(30);
 //        $this->save();
 //    }
+    public function trips()
+    {
+        return $this->hasMany(Trip::class);
+    }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\HotelController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\TransportationCompanyController;
+use App\Http\Controllers\TripController;
 use App\Http\Controllers\TwoFactorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -35,61 +36,62 @@ Route::group([
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::get('/user-profile', [AuthController::class, 'userProfile']);
-    Route::post('email_verification',[EmailVerificationController::class,'email_verification']);
-    Route::get('email_verification',[EmailVerificationController::class,'sendEmailVerification']);
+    Route::get('/user-profile', [AuthController::class, 'userProfile'])->middleware('auth');
+    Route::post('/updateWallet/{id}', [AuthController::class, 'updateWallet'])->middleware('auth');
+    Route::post('email_verification', [EmailVerificationController::class, 'email_verification']);
+    Route::get('email_verification', [EmailVerificationController::class, 'sendEmailVerification']);
 });
 Route::group([
     'middleware' => 'api',
     'prefix' => 'country'
 ], function ($router) {
     Route::post('addCountry', [CountryController::class, 'addCountry'])->middleware('auth');
-    Route::post('updateCountry/{id}', [CountryController::class, 'updateCountry']);
-    Route::post('deleteCountry/{id}', [CountryController::class, 'deleteCountry']);
-    Route::post('searchCountry/{name}', [CountryController::class, 'searchCountry']);
-    Route::post('getCountry/{id}', [CountryController::class, 'getCountry']);
-    Route::get('getAllCountries',[CountryController::class,'getAllCountries']);
-    Route::post('updatePhoto/{id}', [CountryController::class, 'updatePhoto']);
+    Route::post('updateCountry/{id}', [CountryController::class, 'updateCountry'])->middleware('auth');
+    Route::post('deleteCountry/{id}', [CountryController::class, 'deleteCountry'])->middleware('auth');
+    Route::post('searchCountry/{name}', [CountryController::class, 'searchCountry'])->middleware('auth');
+    Route::post('getCountry/{id}', [CountryController::class, 'getCountry'])->middleware('auth');
+    Route::get('getAllCountries', [CountryController::class, 'getAllCountries'])->middleware('auth');
+    Route::post('updatePhoto/{id}', [CountryController::class, 'updatePhoto'])->middleware('auth');
 
 });
 Route::group([
     'middleware' => 'api',
     'prefix' => 'city'
 ], function ($router) {
-    Route::post('addCity', [CityController::class, 'addCity']);
-    Route::post('updateCity/{id}', [CityController::class, 'updateCity']);
-    Route::post('deleteCity/{id}', [CityController::class, 'deleteCity']);
-    Route::post('searchCity/{name}', [CityController::class, 'searchCity']);
-    Route::post('getCity/{id}', [CityController::class, 'getCity']);
-    Route::get('getAllCities',[CityController::class,'getAllCities']);
-    Route::post('updatePhoto/{id}', [CityController::class, 'updatePhoto']);
+    Route::post('addCity', [CityController::class, 'addCity'])->middleware('auth');
+    Route::post('updateCity/{id}', [CityController::class, 'updateCity'])->middleware('auth');
+    Route::post('deleteCity/{id}', [CityController::class, 'deleteCity'])->middleware('auth');
+    Route::post('searchCity/{name}', [CityController::class, 'searchCity'])->middleware('auth');
+    Route::post('getCity/{id}', [CityController::class, 'getCity'])->middleware('auth');
+    Route::get('getAllCities', [CityController::class, 'getAllCities'])->middleware('auth');
+    Route::post('updatePhoto/{id}', [CityController::class, 'updatePhoto'])->middleware('auth');
 
 });
 Route::group([
     'middleware' => 'api',
     'prefix' => 'facility'
 ], function ($router) {
-    Route::post('addFacility', [FacilityController::class, 'addFacility']);
-    Route::post('updateFacility/{id}', [FacilityController::class, 'updateFacility']);
-    Route::post('deleteFacility/{id}', [FacilityController::class, 'deleteFacility']);
-    Route::post('searchFacility/{name}', [FacilityController::class, 'searchFacility']);
+    Route::post('addFacility', [FacilityController::class, 'addFacility'])->middleware('auth');
+    Route::post('updateFacility/{id}', [FacilityController::class, 'updateFacility'])->middleware('auth');
+    Route::post('deleteFacility/{id}', [FacilityController::class, 'deleteFacility'])->middleware('auth');
+    Route::post('searchFacility/{name}', [FacilityController::class, 'searchFacility'])->middleware('auth');
     Route::post('getFacility/{id}', [FacilityController::class, 'getFacility']);
-    Route::get('getAllFacility',[FacilityController::class,'getAllFacility']);
-    Route::post('getFacilityByCity/{id}', [FacilityController::class, 'getFacilityByCity']);
+    Route::get('getAllFacility', [FacilityController::class, 'getAllFacility']);
+    Route::post('getFacilityByCity/{id}', [FacilityController::class, 'getFacilityByCity'])->middleware('auth');
     Route::post('updatePhoto/{id}', [FacilityController::class, 'updatePhoto']);
 });
 Route::group([
     'middleware' => 'api',
     'prefix' => 'hotel'
 ], function ($router) {
-    Route::post('addHotel', [HotelController::class, 'addHotel']);
-    Route::post('updateHotel/{id}', [HotelController::class, 'updateHotel']);
-    Route::post('deleteHotel/{id}', [HotelController::class, 'deleteHotel']);
-    Route::post('searchHotel/{name}', [HotelController::class, 'searchHotel']);
-    Route::post('getHotel/{id}', [HotelController::class, 'getHotel']);
-    Route::get('getAllHotel',[HotelController::class,'getAllHotel']);
-    Route::post('getHotelByCity/{id}', [HotelController::class, 'getHotelByCity']);
-    Route::post('updatePhoto/{id}', [HotelController::class, 'updatePhoto']);
+    Route::post('addHotel', [HotelController::class, 'addHotel'])->middleware('auth');
+    Route::post('updateHotel/{id}', [HotelController::class, 'updateHotel'])->middleware('auth');
+    Route::post('deleteHotel/{id}', [HotelController::class, 'deleteHotel'])->middleware('auth');
+    Route::post('searchHotel/{name}', [HotelController::class, 'searchHotel'])->middleware('auth');
+    Route::post('getHotel/{id}', [HotelController::class, 'getHotel'])->middleware('auth');
+    Route::get('getAllHotel', [HotelController::class, 'getAllHotel'])->middleware('auth');
+    Route::post('getHotelByCity/{id}', [HotelController::class, 'getHotelByCity'])->middleware('auth');
+    Route::post('updatePhoto/{id}', [HotelController::class, 'updatePhoto'])->middleware('auth');
 
 
 });
@@ -97,26 +99,40 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'restaurant'
 ], function ($router) {
-    Route::post('addRestaurant', [RestaurantController::class, 'addRestaurant']);
-    Route::post('updateRestaurant/{id}', [RestaurantController::class, 'updateRestaurant']);
-    Route::post('deleteRestaurant/{id}', [RestaurantController::class, 'deleteRestaurant']);
-    Route::post('searchRestaurant/{name}', [RestaurantController::class, 'searchRestaurant']);
-    Route::post('getRestaurant/{id}', [RestaurantController::class, 'getRestaurant']);
-    Route::get('getAllRestaurant',[RestaurantController::class,'getAllRestaurant']);
-    Route::post('getRestaurantByCity/{id}', [RestaurantController::class, 'getRestaurantByCity']);
-    Route::post('updatePhoto/{id}', [RestaurantController::class, 'updatePhoto']);
+    Route::post('addRestaurant', [RestaurantController::class, 'addRestaurant'])->middleware('auth');
+    Route::post('updateRestaurant/{id}', [RestaurantController::class, 'updateRestaurant'])->middleware('auth');
+    Route::post('deleteRestaurant/{id}', [RestaurantController::class, 'deleteRestaurant'])->middleware('auth');
+    Route::post('searchRestaurant/{name}', [RestaurantController::class, 'searchRestaurant'])->middleware('auth');
+    Route::post('getRestaurant/{id}', [RestaurantController::class, 'getRestaurant'])->middleware('auth');
+    Route::get('getAllRestaurant', [RestaurantController::class, 'getAllRestaurant'])->middleware('auth');
+    Route::post('getRestaurantByCity/{id}', [RestaurantController::class, 'getRestaurantByCity'])->middleware('auth');
+    Route::post('updatePhoto/{id}', [RestaurantController::class, 'updatePhoto'])->middleware('auth');
 
 });
 Route::group([
     'middleware' => 'api',
     'prefix' => 'company'
 ], function ($router) {
-    Route::post('addCompany', [TransportationCompanyController::class, 'addCompany']);
-    Route::post('updateCompany/{id}', [TransportationCompanyController::class, 'updateCompany']);
-    Route::post('deleteCompany/{id}', [TransportationCompanyController::class, 'deleteCompany']);
-    Route::post('searchCompany/{name}', [TransportationCompanyController::class, 'searchCompany']);
-    Route::post('getCompany/{id}', [TransportationCompanyController::class, 'getCompany']);
-    Route::get('getAllCompany',[TransportationCompanyController::class,'getAllCompany']);
-    Route::post('updatePhoto/{id}', [TransportationCompanyController::class, 'updatePhoto']);
+    Route::post('addCompany', [TransportationCompanyController::class, 'addCompany'])->middleware('auth');
+    Route::post('updateCompany/{id}', [TransportationCompanyController::class, 'updateCompany'])->middleware('auth');
+    Route::post('deleteCompany/{id}', [TransportationCompanyController::class, 'deleteCompany'])->middleware('auth');
+    Route::post('searchCompany/{name}', [TransportationCompanyController::class, 'searchCompany'])->middleware('auth');
+    Route::post('getCompany/{id}', [TransportationCompanyController::class, 'getCompany'])->middleware('auth');
+    Route::get('getAllCompany', [TransportationCompanyController::class, 'getAllCompany'])->middleware('auth');
+    Route::post('updatePhoto/{id}', [TransportationCompanyController::class, 'updatePhoto'])->middleware('auth');
 
+});
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'trip'
+], function ($router) {
+    Route::post('addTrip', [TripController::class, 'addTrip'])->middleware('auth');
+    Route::post('updateTrip/{id}', [TripController::class, 'updateTrip'])->middleware('auth');
+    Route::post('deleteTrip/{id}', [TripController::class, 'deleteTrip'])->middleware('auth');
+    // Route::post('searchCompany/{name}', [TransportationCompanyController::class, 'searchCompany'])->middleware('auth');
+    Route::post('getTrip/{id}', [TripController::class, 'getTrip'])->middleware('auth');
+    Route::get('getAllTrips', [TripController::class, 'getAllTrips'])->middleware('auth');
+    Route::post('updatePhoto/{id}', [TripController::class, 'updatePhoto'])->middleware('auth');
+    Route::get('getAdminTrips', [TripController::class, 'getAdminTrips'])->middleware('auth');
+    Route::get('getUserTrips', [TripController::class, 'getUserTrips'])->middleware('auth');
 });
