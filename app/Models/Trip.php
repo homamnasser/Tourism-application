@@ -13,7 +13,7 @@ Trip extends Model
         'name',
         'description',
         'imgs',
-        //'type',
+        'capacity',
         'cost',
         'starting_date',
         'ending_date',
@@ -22,4 +22,9 @@ Trip extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }}
+    }
+    public function activity()
+    {
+        return $this->hasOne(Activity::class);
+    }
+}

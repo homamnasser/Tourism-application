@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('starting_date');
             $table->date('ending_date');
             $table->bigInteger('cost');
-            //    $table->integer('type')->default(1);
+            $table->integer('capacity');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
