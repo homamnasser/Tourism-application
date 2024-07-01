@@ -35,7 +35,8 @@ Route::group([
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::post('/ref
+    resh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile'])->middleware('auth');
     Route::post('/updateWallet/{id}', [AuthController::class, 'updateWallet'])->middleware('auth');
     Route::post('email_verification', [EmailVerificationController::class, 'email_verification']);
