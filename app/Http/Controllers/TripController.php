@@ -58,6 +58,7 @@ class TripController extends Controller
                 'starting_date' => $trip->starting_date,
                 'ending_date' => $trip->ending_date,
                 'user_name' => $trip->user->first_name . ' ' . $trip->user->last_name,
+                'current_number'=>$trip->current_number,
                 'imgs' => json_decode($images)
 
 
@@ -97,7 +98,7 @@ class TripController extends Controller
 
 
         return response()->json([
-                'message' => 'Ttrip updated successfully ',
+                'message' => 'Trip updated successfully ',
                 'result' => [
                     'trip_name' => $trip->name,
                     'description' => $trip->description,
@@ -105,6 +106,8 @@ class TripController extends Controller
                     'starting_date' => $trip->starting_date,
                     'ending_date' => $trip->ending_date,
                     'user_name' => $trip->user->first_name . ' ' . $trip->user->last_name,
+                    'current_number'=>$trip->current_number,
+
                 ]
             ]
             , 201);
@@ -154,6 +157,7 @@ class TripController extends Controller
                     'starting_date' => $trip->starting_date,
                     'ending_date' => $trip->ending_date,
                     'user_name' => $trip->user->first_name . ' ' . $trip->user->last_name,
+                    'current_number'=>$trip->current_number,
                     'imgs' => json_decode($trip->imgs)
                 ]
             ]
@@ -161,7 +165,7 @@ class TripController extends Controller
     }
 
     /*
-  عرض كل المنشات
+  عرض كل الرحلات
  */
     public function getAllTrips()
     {
@@ -176,6 +180,7 @@ class TripController extends Controller
                 'starting_date' => $data1->starting_date,
                 'ending_date' => $data1->ending_date,
                 'user_name' => $data1->user->first_name . ' ' . $data1->user->last_name,
+                'current_number'=>$data1->current_number,
                 'imgs' => json_decode($data1->imgs)
             ]);
         }
@@ -189,7 +194,7 @@ class TripController extends Controller
                 'code' => '0',
                 'message' => 'All trips',
                 'result' => [
-                    'facilities' => $trips,
+                    'trips' => $trips,
                 ]
             ]
             , 201);
@@ -232,7 +237,7 @@ class TripController extends Controller
  */
     public function getAdminTrips()
     {
-        $trip = Trip::where('user_id', 1)->get();
+            $trip = Trip::where('user_id', 1)->get();
             $trips = [];
         foreach ($trip as $data1) {
 
@@ -243,6 +248,7 @@ class TripController extends Controller
                 'starting_date' => $data1->starting_date,
                 'ending_date' => $data1->ending_date,
                 'user_name' => $data1->user->first_name . ' ' . $data1->user->last_name,
+                'current_number'=>$data1->current_number,
                 'imgs' => json_decode($data1->imgs)
 
             ]);
@@ -280,6 +286,7 @@ class TripController extends Controller
                 'starting_date' => $data1->starting_date,
                 'ending_date' => $data1->ending_date,
                 'user_name' => $data1->user->first_name . ' ' . $data1->user->last_name,
+                'current_number'=>$data1->current_number,
                 'imgs' => json_decode($data1->imgs)
 
             ]);
@@ -293,7 +300,7 @@ class TripController extends Controller
 
 
         return response()->json([
-                'message' => 'Admin trips',
+                'message' => 'user trips',
                 'result' => [
                     'data' => $trips
                 ]

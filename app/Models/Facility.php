@@ -18,5 +18,10 @@ class Facility extends Model
     {
         return $this->belongsTo(City::class);
     }
+    public function activity()
+    {
+        return $this->hasMany(Activity::class);
+
+    }
 
 }

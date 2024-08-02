@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Hotel extends Model
 {
     use HasFactory;
-    protected $fillable=[
+
+    protected $fillable = [
         'name',
         'description',
         'price',
@@ -16,8 +17,14 @@ class Hotel extends Model
         'city_id',
         'imgs'
     ];
+
     public function city()
     {
         return $this->belongsTo(City::class);
+    }
+
+    public function activity()
+    {
+        return $this->hasMany(Activity::class);
     }
 }

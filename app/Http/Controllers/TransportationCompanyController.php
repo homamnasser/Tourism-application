@@ -41,7 +41,7 @@ class TransportationCompanyController extends Controller
 
         return response()->json([
             'code' => '0',
-            'message' => 'Facility added successfully ',
+            'message' => 'Company added successfully ',
             'result' => [
                 'company_name' => $company->name,
                 'price' => $company->price,

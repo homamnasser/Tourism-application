@@ -18,6 +18,7 @@ Trip extends Model
         'starting_date',
         'ending_date',
         'user_id',
+        'current_number'
     ];
     public function user()
     {
@@ -26,5 +27,9 @@ Trip extends Model
     public function activity()
     {
         return $this->hasOne(Activity::class);
+    }
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
     }
 }

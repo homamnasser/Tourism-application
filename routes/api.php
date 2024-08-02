@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\EmailVerificationController;
@@ -35,8 +37,7 @@ Route::group([
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/ref
-    resh', [AuthController::class, 'refresh']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile'])->middleware('auth');
     Route::post('/updateWallet/{id}', [AuthController::class, 'updateWallet'])->middleware('auth');
     Route::post('email_verification', [EmailVerificationController::class, 'email_verification']);
@@ -130,10 +131,35 @@ Route::group([
     Route::post('addTrip', [TripController::class, 'addTrip'])->middleware('auth');
     Route::post('updateTrip/{id}', [TripController::class, 'updateTrip'])->middleware('auth');
     Route::post('deleteTrip/{id}', [TripController::class, 'deleteTrip'])->middleware('auth');
-    // Route::post('searchCompany/{name}', [TransportationCompanyController::class, 'searchCompany'])->middleware('auth');
     Route::post('getTrip/{id}', [TripController::class, 'getTrip'])->middleware('auth');
     Route::get('getAllTrips', [TripController::class, 'getAllTrips'])->middleware('auth');
     Route::post('updatePhoto/{id}', [TripController::class, 'updatePhoto'])->middleware('auth');
     Route::get('getAdminTrips', [TripController::class, 'getAdminTrips'])->middleware('auth');
     Route::get('getUserTrips', [TripController::class, 'getUserTrips'])->middleware('auth');
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'activity'
+], function ($router) {
+    Route::post('addActivity', [ActivityController::class, 'addActivity'])->middleware('auth');
+    Route::post('updateActivity/{id}', [ActivityController::class, 'updateActivity'])->middleware('auth');
+    Route::post('deleteActivity/{id}', [ActivityController::class, 'deleteActivity'])->middleware('auth');
+    Route::post('getActivity/{id}', [ActivityController::class, 'getActivity'])->middleware('auth');
+    Route::post('getTripActivity/{id}', [ActivityController::class, 'getTripActivity'])->middleware('auth');
+
+});
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'booking'
+], function ($router) {
+    Route::post('addBook', [BookingController::class, 'addBook'])->middleware('auth');
+    Route::post('updateBook/{id}', [BookingController::class, 'updateBook'])->middleware('auth');
+    Route::post('getUserBook/{id}', [BookingController::class, 'getUserBook'])->middleware('auth');
+    Route::get('getAllUserBookings', [BookingController::class, 'getAllUserBookings'])->middleware('auth');
+    Route::get('getAllBookings', [BookingController::class, 'getAllBookings'])->middleware('auth');
+
+    Route::post('deleteBook/{id}', [BookingController::class, 'deleteBook'])->middleware('auth');
+
 });

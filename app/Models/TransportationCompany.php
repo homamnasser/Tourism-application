@@ -8,11 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class TransportationCompany extends Model
 {
     use HasFactory;
-    protected $fillable=[
+
+    protected $fillable = [
         'name',
         'description',
         'price',
         'transport_type',
         'imgs'
     ];
+
+    public function activity()
+    {
+        return $this->hasMany(Activity::class);
+    }
 }
