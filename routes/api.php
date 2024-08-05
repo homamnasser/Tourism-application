@@ -159,7 +159,8 @@ Route::group([
     Route::post('getUserBook/{id}', [BookingController::class, 'getUserBook'])->middleware('auth');
     Route::get('getAllUserBookings', [BookingController::class, 'getAllUserBookings'])->middleware('auth');
     Route::get('getAllBookings', [BookingController::class, 'getAllBookings'])->middleware('auth');
-
+    Route::get('getUserFinance', [BookingController::class, 'getUserFinance'])->middleware('auth');
     Route::post('deleteBook/{id}', [BookingController::class, 'deleteBook'])->middleware('auth');
+    Route::post('viewUserFinance/{id}', [BookingController::class, 'viewUserFinance'])->middleware('auth');
 
 });

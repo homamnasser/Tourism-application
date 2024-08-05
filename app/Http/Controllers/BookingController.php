@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Finance;
 use App\Models\Trip;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -64,9 +65,20 @@ class BookingController extends Controller
         /*
         الدفع
         */
+        $before=$user->wallet;
         $user->decrement('wallet', $cost);
         $admin = User::find(1);
         $admin->increment('wallet', $cost);
+
+
+        Finance::create([
+            'user_id'=>$user->id,
+            'amount'=>$cost,
+            'before'=>$before,
+            'after'=>$user->wallet,
+            'type'=>'decrement',
+            'description'=>'for booking with'.' '.$trip->name .' '.'trip'
+        ]);
         /*
          * العدد المتاح
          * */
@@ -107,9 +119,19 @@ class BookingController extends Controller
         /*
                 الدفع
         */
+        $before=$book->user->wallet;
         $book->user->increment('wallet', $book->total_price);
         $admin = User::find(1);
         $admin->decrement('wallet', $book->total_price);
+
+        Finance::create([
+            'user_id'=>$book->user->id,
+            'amount'=>$book->total_price,
+            'before'=>$before,
+            'after'=>$book->user->wallet,
+            'type'=>'increment',
+            'description'=>'for cancel booking with'.' '.$book->trip->name .' '.'trip'
+        ]);
         /*
          * العدد المتاح
          * */
@@ -148,9 +170,20 @@ class BookingController extends Controller
         $cost = $booking->trip->cost * $booking->person_number;
         $cost1 = $booking->trip->cost * $request->person_number;
 
+        $before=$booking->user->wallet;
         $booking->user->increment('wallet', $cost);
         $admin = User::find(1);
         $admin->decrement('wallet', $cost);
+
+
+        Finance::create([
+            'user_id'=>$booking->user->id,
+            'amount'=>$cost,
+            'before'=>$before,
+            'after'=>$booking->user->wallet,
+            'type'=>'increment',
+            'description'=>'for update booking with'.' '.$booking->trip->name .' '.'trip'
+        ]);
         /*
          * العدد المتاح
          * */
@@ -183,12 +216,24 @@ class BookingController extends Controller
         /*
         الدفع
         */
+        $before1=$booking->user->wallet;
         $booking->user->decrement('wallet', $cost1);
         $admin->increment('wallet', $cost1);
+
+        Finance::create([
+            'user_id'=>$booking->user->id,
+            'amount'=>$cost1,
+            'before'=>$before,
+            'after'=>$booking->user->wallet,
+            'type'=>'decrement',
+            'description'=>'for update booking with'.' '.$booking->trip->name .' '.'trip'
+        ]);
+
         /*
          * العدد المتاح
          * */
         $booking->trip->increment('current_number', $request->person_number);
+
 
         return response()->json([
 
@@ -231,9 +276,8 @@ class BookingController extends Controller
     public function getAllUserBookings()
     {
         $user = Auth::user();
-        $booking = Booking::where('user_id', $user->id)->get();
         $bookings = [];
-        foreach ($booking as $data1) {
+        foreach ($user->bookings as $data1) {
 
             array_push($bookings, [
                 'trip_name' => $data1->trip?->name,
@@ -243,7 +287,7 @@ class BookingController extends Controller
             ]);
         }
 
-        if ($booking->isEmpty()) {
+        if (empty($bookings)) {
             return response()->json([
                 'message' => 'Not found bookings',
             ], 404);
@@ -258,7 +302,7 @@ class BookingController extends Controller
             ]
             , 201);
     }
-    /* جلب جميع الرحلات*/
+    /* جلب جميع الحجوزات*/
     public function getAllBookings()
     {
         $bookings = [];
@@ -283,6 +327,71 @@ class BookingController extends Controller
                 'message' => 'All Bookings',
                 'result' => [
                     'bookings' => $bookings,
+                ]
+            ]
+            , 201);
+    }
+    /*
+     * جلب سجل اليوزر
+     * */
+    public function getUserFinance()
+    {
+        $user = Auth::user();
+        $finances = [];
+        foreach ($user->finances as $data1) {
+
+            array_push($finances, [
+                'amount'=>$data1->amount,
+                'before'=>$data1->before,
+                'after'=>$data1->after,
+                'type'=>$data1->type,
+                'description'=>$data1->description,
+                'date'=>$data1->created_at->format('Y-m-d')
+            ]);
+        }
+
+        if (empty($finances)) {
+            return response()->json([
+                'message' => 'Not found finances',
+            ], 404);
+        }
+
+
+        return response()->json([
+                'message' => 'user finances',
+                'result' => [
+                    'data' => $finances
+                ]
+            ]
+            , 201);
+    }
+    public function viewUserFinance($id)
+    {
+        $user = User::find($id);
+        $finances = [];
+        foreach ($user->finances as $data1) {
+
+            array_push($finances, [
+                'amount'=>$data1->amount,
+                'before'=>$data1->before,
+                'after'=>$data1->after,
+                'type'=>$data1->type,
+                'description'=>$data1->description,
+                'date'=>$data1->created_at->format('Y-m-d')
+            ]);
+        }
+
+        if (empty($finances)) {
+            return response()->json([
+                'message' => 'Not found finances',
+            ], 404);
+        }
+
+
+        return response()->json([
+                'message' => 'user finances',
+                'result' => [
+                    'data' => $finances
                 ]
             ]
             , 201);

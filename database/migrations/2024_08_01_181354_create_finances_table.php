@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('finances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('from_user');
-            $table->foreignId('to_user');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->double('amount');
             $table->double('before');
             $table->double('after');
             $table->string('description');
+            $table->set('type',['increment','decrement']);
             $table->timestamps();
         });
     }
