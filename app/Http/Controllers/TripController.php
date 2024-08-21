@@ -307,4 +307,5 @@ class TripController extends Controller
             ]
             , 201);
     }
+
 }

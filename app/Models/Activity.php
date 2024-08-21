@@ -9,7 +9,8 @@ class Activity extends Model
 {
     use HasFactory;
     protected $fillable =[
-        'facility_id',
+        'facility_id
+        ',
         'transport_id',
         'hotel_id',
         'restaurant_id',

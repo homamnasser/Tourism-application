@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('address');
-            $table->integer('role_id')->default(2);
+            $table->unsignedBigInteger('role_id')->default(2);
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->double('wallet')->default(0.0);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

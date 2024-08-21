@@ -21,7 +21,6 @@ class HotelController extends Controller
             'name' => 'required|string',
             'description' => 'required|string',
             'price' => 'required|integer',
-            'availability' => 'required|integer',
             'city_id' => 'required|integer',
             'imgs' => 'required',
             'imgs.*' => ['image', 'mimes:jpeg,png,jpg,gif', 'max:512'],
@@ -43,7 +42,6 @@ class HotelController extends Controller
                 'description' => $request->description,
                 'city_id'=>$request->city_id,
                 'price'=>$request->price,
-                'availability'=>$request->availability,
                 'imgs' => $images,
             ]
         );
@@ -55,7 +53,6 @@ class HotelController extends Controller
                 'hotel_name' => $hotel->name,
                 'description' => $hotel->description,
                 'price' => $hotel->price,
-                'availability' => $hotel->availability,
                 'city_name' => $hotel->city->name,
                 'country_name' => $hotel->city->country->name,
                 'imgs'=>json_decode($images)
@@ -81,7 +78,6 @@ class HotelController extends Controller
             'name' => 'string',
             'description' => 'string',
             'price' => 'integer',
-            'availability' => 'integer',
             'city_id' => 'integer',
         ]);
         $city = City::find($request->city_id);
@@ -105,7 +101,6 @@ class HotelController extends Controller
                     'hotel_name' => $hotel->name,
                     'description' => $hotel->description,
                     'price' => $hotel->price,
-                    'availability' => $hotel->availability,
                     'city_name' => $hotel->city->name,
                     'country_name' => $hotel->city->country->name,
 
@@ -147,7 +142,6 @@ class HotelController extends Controller
             array_push($hotels, [
                 'name' => $data->name,
                 'description' => $data->description,
-                'availability' => $data->availability,
                 'city_name' => $data->city->name,
                 'country_name' => $data->city->country->name,
                 'imgs'=>json_decode($data->imgs)
@@ -187,7 +181,6 @@ class HotelController extends Controller
                 'result' => [
                     'hotel_name' => $hotel->name,
                     'description' => $hotel->description,
-                    'availability' => $hotel->availability,
                     'city_name' => $hotel->city->name,
                     'country_name' => $hotel->city->country->name,
                     'imgs'=>json_decode($hotel->imgs)
@@ -208,7 +201,6 @@ class HotelController extends Controller
             array_push($hotels, [
                 'name' => $data1->name,
                 'description' => $data1->description,
-                'availability' => $data1->availability,
                 'city_name' => $data1->city->name,
                 'country_name' => $data1->city->country->name,
                 'imgs'=>json_decode($data1->imgs)
@@ -249,7 +241,6 @@ class HotelController extends Controller
             array_push($hotels, [
                 'name' => $data->name,
                 'description' => $data->description,
-                'availability' => $data->availability,
                 'city_name' => $data->city->name,
                 'country_name' => $data->city->country->name,
                 'imgs'=>json_decode($data->imgs)

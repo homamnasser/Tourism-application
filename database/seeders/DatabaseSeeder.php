@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+        $this->call([
+            PermissionRoleSeeder::class
+        ]);
         User::insert([
             'first_name'=>'admin',
             'last_name'=>'admin',
@@ -28,5 +31,6 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('123456789')
 
         ]);
+
     }
 }

@@ -65,19 +65,19 @@ class BookingController extends Controller
         /*
         الدفع
         */
-        $before=$user->wallet;
+        $before = $user->wallet;
         $user->decrement('wallet', $cost);
         $admin = User::find(1);
         $admin->increment('wallet', $cost);
 
 
         Finance::create([
-            'user_id'=>$user->id,
-            'amount'=>$cost,
-            'before'=>$before,
-            'after'=>$user->wallet,
-            'type'=>'decrement',
-            'description'=>'for booking with'.' '.$trip->name .' '.'trip'
+            'user_id' => $user->id,
+            'amount' => $cost,
+            'before' => $before,
+            'after' => $user->wallet,
+            'type' => 'decrement',
+            'description' => 'for booking with' . ' ' . $trip->name . ' ' . 'trip'
         ]);
         /*
          * العدد المتاح
@@ -119,18 +119,18 @@ class BookingController extends Controller
         /*
                 الدفع
         */
-        $before=$book->user->wallet;
+        $before = $book->user->wallet;
         $book->user->increment('wallet', $book->total_price);
         $admin = User::find(1);
         $admin->decrement('wallet', $book->total_price);
 
         Finance::create([
-            'user_id'=>$book->user->id,
-            'amount'=>$book->total_price,
-            'before'=>$before,
-            'after'=>$book->user->wallet,
-            'type'=>'increment',
-            'description'=>'for cancel booking with'.' '.$book->trip->name .' '.'trip'
+            'user_id' => $book->user->id,
+            'amount' => $book->total_price,
+            'before' => $before,
+            'after' => $book->user->wallet,
+            'type' => 'increment',
+            'description' => 'for cancel booking with' . ' ' . $book->trip->name . ' ' . 'trip'
         ]);
         /*
          * العدد المتاح
@@ -166,23 +166,22 @@ class BookingController extends Controller
         }
 
 
-
         $cost = $booking->trip->cost * $booking->person_number;
         $cost1 = $booking->trip->cost * $request->person_number;
 
-        $before=$booking->user->wallet;
+        $before = $booking->user->wallet;
         $booking->user->increment('wallet', $cost);
         $admin = User::find(1);
         $admin->decrement('wallet', $cost);
 
 
         Finance::create([
-            'user_id'=>$booking->user->id,
-            'amount'=>$cost,
-            'before'=>$before,
-            'after'=>$booking->user->wallet,
-            'type'=>'increment',
-            'description'=>'for update booking with'.' '.$booking->trip->name .' '.'trip'
+            'user_id' => $booking->user->id,
+            'amount' => $cost,
+            'before' => $before,
+            'after' => $booking->user->wallet,
+            'type' => 'increment',
+            'description' => 'for update booking with' . ' ' . $booking->trip->name . ' ' . 'trip'
         ]);
         /*
          * العدد المتاح
@@ -195,7 +194,7 @@ class BookingController extends Controller
             ], 400);
         }
 
-        if ($cost1 >  $booking->user->wallet) {
+        if ($cost1 > $booking->user->wallet) {
             return response()->json([
                 'message' => 'You dont have enough money'
             ], 400);
@@ -207,7 +206,7 @@ class BookingController extends Controller
         }
 
 
-        $booking ->update([
+        $booking->update([
             'person_number' => $request->person_number,
             'total_price' => $cost1,
 
@@ -216,17 +215,17 @@ class BookingController extends Controller
         /*
         الدفع
         */
-        $before1=$booking->user->wallet;
+        $before1 = $booking->user->wallet;
         $booking->user->decrement('wallet', $cost1);
         $admin->increment('wallet', $cost1);
 
         Finance::create([
-            'user_id'=>$booking->user->id,
-            'amount'=>$cost1,
-            'before'=>$before,
-            'after'=>$booking->user->wallet,
-            'type'=>'decrement',
-            'description'=>'for update booking with'.' '.$booking->trip->name .' '.'trip'
+            'user_id' => $booking->user->id,
+            'amount' => $cost1,
+            'before' => $before,
+            'after' => $booking->user->wallet,
+            'type' => 'decrement',
+            'description' => 'for update booking with' . ' ' . $booking->trip->name . ' ' . 'trip'
         ]);
 
         /*
@@ -270,6 +269,7 @@ class BookingController extends Controller
             ]
             , 201);
     }
+
     /*
     * جلب رحلات المستخدم
     * */
@@ -302,6 +302,7 @@ class BookingController extends Controller
             ]
             , 201);
     }
+
     /* جلب جميع الحجوزات*/
     public function getAllBookings()
     {
@@ -331,6 +332,7 @@ class BookingController extends Controller
             ]
             , 201);
     }
+
     /*
      * جلب سجل اليوزر
      * */
@@ -341,12 +343,12 @@ class BookingController extends Controller
         foreach ($user->finances as $data1) {
 
             array_push($finances, [
-                'amount'=>$data1->amount,
-                'before'=>$data1->before,
-                'after'=>$data1->after,
-                'type'=>$data1->type,
-                'description'=>$data1->description,
-                'date'=>$data1->created_at->format('Y-m-d')
+                'amount' => $data1->amount,
+                'before' => $data1->before,
+                'after' => $data1->after,
+                'type' => $data1->type,
+                'description' => $data1->description,
+                'date' => $data1->created_at->format('Y-m-d')
             ]);
         }
 
@@ -365,6 +367,7 @@ class BookingController extends Controller
             ]
             , 201);
     }
+
     public function viewUserFinance($id)
     {
         $user = User::find($id);
@@ -372,12 +375,12 @@ class BookingController extends Controller
         foreach ($user->finances as $data1) {
 
             array_push($finances, [
-                'amount'=>$data1->amount,
-                'before'=>$data1->before,
-                'after'=>$data1->after,
-                'type'=>$data1->type,
-                'description'=>$data1->description,
-                'date'=>$data1->created_at->format('Y-m-d')
+                'amount' => $data1->amount,
+                'before' => $data1->before,
+                'after' => $data1->after,
+                'type' => $data1->type,
+                'description' => $data1->description,
+                'date' => $data1->created_at->format('Y-m-d')
             ]);
         }
 
@@ -392,6 +395,42 @@ class BookingController extends Controller
                 'message' => 'user finances',
                 'result' => [
                     'data' => $finances
+
+                ]
+            ]
+            , 201);
+    }
+
+    public function getTripBook($id)
+    {
+        $trip = Trip::find($id);
+        if (!$trip) {
+            return response()->json([
+                'message' => 'Trip not found',
+            ], 404);
+        }
+        $bookings = [];
+        foreach ($trip->bookings as $booking) {
+            array_push($bookings, [
+                'trip_name' => $booking->trip?->name,
+                'cost' => $booking->trip?->cost,
+                'person_number' => $booking->person_number,
+                'total_price' => $booking->total_price
+            ]);
+        }
+        if (empty($bookings)) {
+            return response()->json([
+                'message' => 'Bookings not found',
+            ], 404);
+        }
+
+
+        return response()->json([
+                'code' => '0',
+                'message' => 'This is booking ',
+                'result' => [
+                    'bookings' => $bookings,
+
                 ]
             ]
             , 201);

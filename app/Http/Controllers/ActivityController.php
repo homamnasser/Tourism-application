@@ -220,8 +220,7 @@ class ActivityController extends Controller
                     'trip_id' => $activity->trip->name,
                     'restaurant_id' => $activity->restaurant->name,
                     'hotel_id' => $activity->hotel->name,
-                    'transport_id'=>$activity->transport->name,
-                    'facility_id' => $activity->facility->name,
+                     'facility_id' => $activity->facility->name,
                 ]
             ]
             , 201);
